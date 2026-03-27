@@ -1,16 +1,3 @@
-/*
- * SOCKS5 DPI Bypass - LD_PRELOAD library for Linux Telegram/AyuGram
- * 
- * Usage: LD_PRELOAD=/path/to/socks5_dpi_bypass.so telegram-desktop
- * 
- * Intercepts SOCKS5 traffic and applies DPI bypass:
- *   - Fragmented SOCKS5 handshake (byte-by-byte with jitter)
- *   - Fragmented SOCKS5 CONNECT request
- *   - TLS ClientHello split at SNI
- * 
- * No UI, no config - just works with Telegram's native SOCKS5 proxy settings.
- */
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
