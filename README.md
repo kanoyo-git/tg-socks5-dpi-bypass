@@ -12,7 +12,7 @@ The library intercepts socket calls (`connect`, `send`, `recv`, `write`) and app
 
 2. **SOCKS5 CONNECT fragmentation** - byte-by-byte sending of connection request. DPI cannot see target address/domain.
 
-3. **TLS ClientHello split** - splitting first TLS packet into two segments. SNI is split between segments, DPI cannot read hostname.
+3. **Adaptive initial payload split** - the first payload after SOCKS5 CONNECT is split at protocol-aware boundaries (TLS record/SNI, HTTP method/Host) or randomized offsets. DPI has a much harder time reconstructing the signature.
 
 ```
 Telegram → [hooked send/recv] → [DPI bypass] → SOCKS5 server
@@ -94,7 +94,7 @@ State machine:
 2. `STATE_SOCKS5_GREETING` → detect auth or CONNECT → byte-by-byte send
 3. `STATE_SOCKS5_AUTH` → detect CONNECT → byte-by-byte send
 4. `STATE_SOCKS5_CONNECT_SENT` → wait for server response
-5. `STATE_TLS_FIRST` → check first packet for TLS → split if TLS
+5. `STATE_INITIAL_BURST` → split the first post-CONNECT payload using TLS/HTTP-aware or generic DPI heuristics
 6. `STATE_PIPE` → transparent data forwarding
 
 ## Limitations
